@@ -1,0 +1,23 @@
+﻿<?xml version=""1.0"" encoding=""UTF-8""?>
+<mxfile host=""app.diagrams.net"">
+  <diagram name=""ERD_Ресторан"">
+    <mxGraphModel dx=""1200"" dy=""800"" grid=""1"" gridSize=""10"" guides=""1"" tooltips=""1"" connect=""1"" arrows=""1"" fold=""1"" page=""1"" pageScale=""1"" pageWidth=""1654"" pageHeight=""1169"">
+      <root>
+        <mxCell id=""0""/>
+        <mxCell id=""1"" parent=""0""/>
+        <mxCell id=""cat"" value=""Category(CategoryID PK, CategoryName, Description)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""40"" y=""40"" width=""320"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""dish"" value=""Dish(DishID PK, CategoryID FK, DishName, Price, WeightGr, IsAvailable)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""40"" y=""130"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""table"" value=""RestaurantTable(TableID PK, TableNumber, Seats, TableStatus)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""420"" y=""40"" width=""320"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""emp"" value=""Employee(EmployeeID PK, RoleID FK, LastName, FirstName, Post, IsActive)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""780"" y=""40"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""role"" value=""Role(RoleID PK, RoleName, RoleDescription)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""780"" y=""130"" width=""300"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""cust"" value=""Customer(CustomerID PK, LastName, FirstName, Phone, Email)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""420"" y=""130"" width=""320"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""res"" value=""Reservation(ReservationID PK, CustomerID FK, TableID FK, EmployeeID FK, ReservationDate, GuestsCount)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""420"" y=""220"" width=""380"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""ord"" value=""Order(OrderID PK, TableID FK, CustomerID FK, EmployeeID FK, OrderDate, OrderStatus, OrderType)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""40"" y=""220"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""oi"" value=""OrderItem(OrderItemID PK, OrderID FK, DishID FK, Quantity, PriceAtOrder)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""40"" y=""310"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""pay"" value=""Payment(PaymentID PK, OrderID FK, EmployeeID FK, Amount, PaymentMethod, PaymentStatus)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""420"" y=""310"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""alog"" value=""AuditLog(LogID PK, UserID, ActionTime, ActionType, ObjectName, Details)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""780"" y=""220"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+        <mxCell id=""app"" value=""AppUser(UserID PK, Login, PasswordHash, EmployeeID FK, RoleID FK, IsActive)"" style=""rounded=0;whiteSpace=wrap;html=1;"" vertex=""1"" parent=""1""><mxGeometry x=""780"" y=""310"" width=""340"" height=""60"" as=""geometry""/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
