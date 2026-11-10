@@ -44,6 +44,15 @@ INSERT INTO dbo.AppUser (Login, PasswordHash, PasswordSalt, EmployeeID, RoleID) 
 (N'chef',    0x235D58F469E1C20FCF9166F51892D98452DA276C5A1550358902642C1D888815, 0x3A29794A694B331D82087DF46E17A060, 5, 5);
 GO
 
+/* ---------- Настройки пользователей (1:1) ---------- */
+INSERT INTO dbo.UserSetting (UserID, Theme, DateFormat, NumberFormat, PageSize, SavedFilters) VALUES
+(1, N'light', N'dd.MM.yyyy', N'ru-RU', 50, N'{"orders":{"status":"Оплачен"}}'),
+(2, N'light', N'dd.MM.yyyy', N'ru-RU', 25, N'{"reports":{"period":"30"}}'),
+(3, N'dark',  N'dd.MM.yyyy', N'ru-RU', 20, N'{"orders":{"status":"Готовится"}}'),
+(4, N'light', N'dd.MM.yyyy', N'ru-RU', 20, NULL),
+(5, N'dark',  N'dd.MM.yyyy', N'ru-RU', 20, N'{"kitchen":{"status":"Оформлен"}}');
+GO
+
 /* ---------- Категории меню ---------- */
 INSERT INTO dbo.Category (CategoryName, Description, SortOrder) VALUES
 (N'Холодные закуски', N'Закуски для начала трапезы', 10),

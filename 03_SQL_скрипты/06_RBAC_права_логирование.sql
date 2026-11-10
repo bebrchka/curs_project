@@ -81,6 +81,7 @@ GRANT SELECT ON dbo.vw_ActiveOrders TO role_Manager_Rest;
 GRANT SELECT ON dbo.vw_OrderBill TO role_Manager_Rest;
 GRANT SELECT ON dbo.vw_ReservationSchedule TO role_Manager_Rest;
 GRANT SELECT ON dbo.vw_OrderDetails TO role_Manager_Rest;
+GRANT SELECT ON dbo.vw_CustomerMasked TO role_Manager_Rest;
 GRANT EXECUTE ON dbo.sp_CreateOrder TO role_Manager_Rest;
 GRANT EXECUTE ON dbo.sp_AddOrderItem TO role_Manager_Rest;
 GRANT EXECUTE ON dbo.sp_CloseOrder TO role_Manager_Rest;
@@ -100,6 +101,7 @@ GRANT SELECT ON dbo.vw_OrderBill TO role_Waiter_Rest;
 GRANT SELECT ON dbo.vw_ReservationSchedule TO role_Waiter_Rest;
 GRANT SELECT ON dbo.RestaurantTable TO role_Waiter_Rest;
 GRANT SELECT ON dbo.Customer TO role_Waiter_Rest;
+GRANT SELECT ON dbo.vw_CustomerMasked TO role_Waiter_Rest;
 GRANT SELECT ON dbo.[Order] TO role_Waiter_Rest;
 GRANT SELECT ON dbo.OrderItem TO role_Waiter_Rest;
 GRANT INSERT, UPDATE ON dbo.[Order] TO role_Waiter_Rest;
@@ -117,6 +119,7 @@ GO
 GRANT SELECT ON dbo.vw_Menu TO role_Cashier_Rest;
 GRANT SELECT ON dbo.vw_ActiveOrders TO role_Cashier_Rest;
 GRANT SELECT ON dbo.vw_OrderBill TO role_Cashier_Rest;
+GRANT SELECT ON dbo.vw_CustomerMasked TO role_Cashier_Rest;
 GRANT SELECT ON dbo.[Order] TO role_Cashier_Rest;
 GRANT SELECT ON dbo.OrderItem TO role_Cashier_Rest;
 GRANT SELECT, INSERT ON dbo.Payment TO role_Cashier_Rest;
@@ -127,6 +130,7 @@ GO
 /* ---------- Повар: кухня и статусы ---------- */
 GRANT SELECT ON dbo.vw_Menu TO role_Chef_Rest;
 GRANT SELECT ON dbo.vw_ActiveOrders TO role_Chef_Rest;
+GRANT SELECT ON dbo.vw_CustomerMasked TO role_Chef_Rest;
 GRANT SELECT ON dbo.vw_OrderBill TO role_Chef_Rest;
 GRANT SELECT ON dbo.[Order] TO role_Chef_Rest;
 GRANT SELECT ON dbo.OrderItem TO role_Chef_Rest;
@@ -142,6 +146,7 @@ GRANT SELECT ON dbo.vw_ActiveOrders TO role_Reports_Rest;
 GRANT SELECT ON dbo.vw_OrderBill TO role_Reports_Rest;
 GRANT SELECT ON dbo.vw_ReservationSchedule TO role_Reports_Rest;
 GRANT SELECT ON dbo.vw_OrderDetails TO role_Reports_Rest;
+GRANT SELECT ON dbo.vw_CustomerMasked TO role_Reports_Rest;
 GRANT EXECUTE ON dbo.sp_GetAuditLog TO role_Reports_Rest;
 GO
 
@@ -173,14 +178,60 @@ DENY UPDATE, DELETE ON dbo.Payment TO role_Waiter_Rest, role_Chef_Rest;
 DENY INSERT, UPDATE, DELETE ON dbo.Dish TO role_Waiter_Rest, role_Cashier_Rest, role_Chef_Rest;
 GO
 
-/* ---------- Назначение ролей пользователям ---------- */
-ALTER ROLE role_Director_Rest ADD MEMBER user_admin_rest;
-ALTER ROLE role_Manager_Rest  ADD MEMBER user_manager_rest;
-ALTER ROLE role_Waiter_Rest   ADD MEMBER user_waiter_rest;
-ALTER ROLE role_Cashier_Rest  ADD MEMBER user_cashier_rest;
-ALTER ROLE role_Chef_Rest     ADD MEMBER user_chef_rest;
-ALTER ROLE role_Reports_Rest  ADD MEMBER user_reports_rest;
-ALTER ROLE role_App_Rest      ADD MEMBER user_app_rest;
+/* ---------- Настройки пользователя: доступ через процедуры ---------- */
+GRANT EXECUTE ON dbo.sp_UserSetting_Get TO role_Manager_Rest, role_Waiter_Rest, role_Cashier_Rest, role_Chef_Rest;
+GRANT EXECUTE ON dbo.sp_UserSetting_Upsert TO role_Manager_Rest, role_Waiter_Rest, role_Cashier_Rest, role_Chef_Rest;
+GO
+
+/* ---------- Назначение ролей пользователям (идемпотентно) ---------- */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_Director_Rest' AND m.name = N'user_admin_rest')
+    ALTER ROLE role_Director_Rest ADD MEMBER user_admin_rest;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_Manager_Rest' AND m.name = N'user_manager_rest')
+    ALTER ROLE role_Manager_Rest ADD MEMBER user_manager_rest;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_Waiter_Rest' AND m.name = N'user_waiter_rest')
+    ALTER ROLE role_Waiter_Rest ADD MEMBER user_waiter_rest;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_Cashier_Rest' AND m.name = N'user_cashier_rest')
+    ALTER ROLE role_Cashier_Rest ADD MEMBER user_cashier_rest;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_Chef_Rest' AND m.name = N'user_chef_rest')
+    ALTER ROLE role_Chef_Rest ADD MEMBER user_chef_rest;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_Reports_Rest' AND m.name = N'user_reports_rest')
+    ALTER ROLE role_Reports_Rest ADD MEMBER user_reports_rest;
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.database_role_members rm
+    JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+    JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+    WHERE r.name = N'role_App_Rest' AND m.name = N'user_app_rest')
+    ALTER ROLE role_App_Rest ADD MEMBER user_app_rest;
 GO
 
 PRINT N'RBAC настроен: 7 ролей, 7 пользователей БД.';

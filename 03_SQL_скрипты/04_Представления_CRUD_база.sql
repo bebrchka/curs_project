@@ -68,6 +68,27 @@ JOIN dbo.RestaurantTable t ON t.TableID = r.TableID
 JOIN dbo.Employee e ON e.EmployeeID = r.EmployeeID;
 GO
 
+CREATE OR ALTER VIEW dbo.vw_CustomerMasked
+AS
+SELECT  CustomerID,
+        LastName,
+        FirstName,
+        MiddleName,
+        CASE
+            WHEN LEN(Phone) >= 4 THEN N'***' + RIGHT(Phone, 4)
+            ELSE N'***'
+        END AS PhoneMasked,
+        CASE
+            WHEN Email IS NULL THEN NULL
+            WHEN CHARINDEX(N'@', Email) > 1
+                THEN LEFT(Email, 1) + N'***' + SUBSTRING(Email, CHARINDEX(N'@', Email), LEN(Email))
+            ELSE N'***'
+        END AS EmailMasked,
+        RegistrationDate,
+        LoyaltyPoints
+FROM dbo.Customer;
+GO
+
 CREATE OR ALTER VIEW dbo.vw_OrderDetails
 AS
 SELECT  o.OrderID,
@@ -569,6 +590,35 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE dbo.sp_DeleteOrderItem
+    @OrderItemID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    DECLARE @OrderID INT;
+    SELECT @OrderID = OrderID FROM dbo.OrderItem WHERE OrderItemID = @OrderItemID;
+    IF @OrderID IS NULL
+        THROW 50317, N'Позиция заказа не найдена', 1;
+    IF NOT EXISTS (SELECT 1 FROM dbo.[Order] WHERE OrderID = @OrderID AND OrderStatus IN (N'Оформлен', N'Готовится'))
+        THROW 50318, N'Нельзя удалять позиции из заказа в текущем статусе', 1;
+
+    BEGIN TRY
+        BEGIN TRAN;
+        DELETE FROM dbo.OrderItem WHERE OrderItemID = @OrderItemID;
+        COMMIT;
+
+        SELECT @OrderID AS OrderID,
+               ISNULL((SELECT SUM(Quantity * PriceAtOrder) FROM dbo.OrderItem WHERE OrderID = @OrderID), 0) AS TotalAmount;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK;
+        THROW;
+    END CATCH
+END
+GO
+
 CREATE OR ALTER PROCEDURE dbo.sp_CloseOrder
     @OrderID       INT,
     @EmployeeID    INT,
@@ -704,6 +754,54 @@ BEGIN
 END
 GO
 
+/* ================= НАСТРОЙКИ ПОЛЬЗОВАТЕЛЯ ================= */
+
+CREATE OR ALTER PROCEDURE dbo.sp_UserSetting_Get
+    @UserID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF NOT EXISTS (SELECT 1 FROM dbo.UserSetting WHERE UserID = @UserID)
+    BEGIN
+        INSERT INTO dbo.UserSetting (UserID) VALUES (@UserID);
+    END
+
+    SELECT UserID, Theme, DateFormat, NumberFormat, PageSize, SavedFilters, UpdatedAt
+    FROM dbo.UserSetting
+    WHERE UserID = @UserID;
+END
+GO
+
+CREATE OR ALTER PROCEDURE dbo.sp_UserSetting_Upsert
+    @UserID       INT,
+    @Theme        NVARCHAR(10),
+    @DateFormat   NVARCHAR(20),
+    @NumberFormat NVARCHAR(10),
+    @PageSize     INT,
+    @SavedFilters NVARCHAR(MAX) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF @Theme NOT IN (N'light', N'dark', N'system')
+        THROW 50220, N'Недопустимая тема оформления', 1;
+    IF @PageSize NOT BETWEEN 5 AND 100
+        THROW 50221, N'Размер страницы должен быть от 5 до 100', 1;
+
+    IF EXISTS (SELECT 1 FROM dbo.UserSetting WHERE UserID = @UserID)
+        UPDATE dbo.UserSetting
+        SET Theme = @Theme,
+            DateFormat = @DateFormat,
+            NumberFormat = @NumberFormat,
+            PageSize = @PageSize,
+            SavedFilters = @SavedFilters,
+            UpdatedAt = GETDATE()
+        WHERE UserID = @UserID;
+    ELSE
+        INSERT INTO dbo.UserSetting (UserID, Theme, DateFormat, NumberFormat, PageSize, SavedFilters)
+        VALUES (@UserID, @Theme, @DateFormat, @NumberFormat, @PageSize, @SavedFilters);
+END
+GO
+
 /* ================= АУДИТ ================= */
 
 CREATE OR ALTER PROCEDURE dbo.sp_Audit_Write
@@ -713,11 +811,15 @@ CREATE OR ALTER PROCEDURE dbo.sp_Audit_Write
     @ObjectName NVARCHAR(80),
     @ObjectID   NVARCHAR(40) = NULL,
     @IPAddress  NVARCHAR(45) = NULL,
-    @Details    NVARCHAR(500) = NULL
+    @Details    NVARCHAR(500) = NULL,
+    @OldValue   NVARCHAR(MAX) = NULL,
+    @NewValue   NVARCHAR(MAX) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
-    INSERT INTO dbo.AuditLog (UserID, LoginName, ActionTime, ActionType, ObjectName, ObjectID, IPAddress, Details)
-    VALUES (@UserID, @LoginName, GETDATE(), @ActionType, @ObjectName, @ObjectID, @IPAddress, @Details);
+    INSERT INTO dbo.AuditLog
+        (UserID, LoginName, ActionTime, ActionType, ObjectName, ObjectID, IPAddress, Details, OldValue, NewValue)
+    VALUES
+        (@UserID, @LoginName, GETDATE(), @ActionType, @ObjectName, @ObjectID, @IPAddress, @Details, @OldValue, @NewValue);
 END
 GO

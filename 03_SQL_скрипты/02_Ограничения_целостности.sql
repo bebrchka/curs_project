@@ -27,7 +27,9 @@ GO
 
 /* ---------- Индексы по внешним ключам и часто используемым полям ---------- */
 CREATE INDEX IX_Employee_RoleID          ON dbo.Employee (RoleID);
-CREATE INDEX IX_AppUser_EmployeeID       ON dbo.AppUser (EmployeeID);
+CREATE UNIQUE INDEX UX_AppUser_EmployeeID
+    ON dbo.AppUser (EmployeeID)
+    WHERE EmployeeID IS NOT NULL;
 CREATE INDEX IX_Dish_CategoryID          ON dbo.Dish (CategoryID);
 CREATE INDEX IX_Dish_IsAvailable         ON dbo.Dish (IsAvailable) INCLUDE (DishName, Price);
 CREATE INDEX IX_Reservation_TableID      ON dbo.Reservation (TableID);

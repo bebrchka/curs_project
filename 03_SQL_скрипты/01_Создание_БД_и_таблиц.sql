@@ -70,6 +70,23 @@ CREATE TABLE dbo.AppUser (
 GO
 
 /* ---------- Категории меню ---------- */
+/* ---------- Пользовательские настройки (связь 1:1 с AppUser) ---------- */
+CREATE TABLE dbo.UserSetting (
+    UserID       INT           NOT NULL,
+    Theme        NVARCHAR(10)  NOT NULL CONSTRAINT DF_UserSetting_Theme DEFAULT (N'light'),
+    DateFormat   NVARCHAR(20)  NOT NULL CONSTRAINT DF_UserSetting_DateFormat DEFAULT (N'dd.MM.yyyy'),
+    NumberFormat NVARCHAR(10)  NOT NULL CONSTRAINT DF_UserSetting_NumberFormat DEFAULT (N'ru-RU'),
+    PageSize     INT           NOT NULL CONSTRAINT DF_UserSetting_PageSize DEFAULT (20),
+    SavedFilters NVARCHAR(MAX) NULL,
+    UpdatedAt    DATETIME      NOT NULL CONSTRAINT DF_UserSetting_UpdatedAt DEFAULT (GETDATE()),
+    CONSTRAINT PK_UserSetting PRIMARY KEY (UserID),
+    CONSTRAINT FK_UserSetting_AppUser FOREIGN KEY (UserID) REFERENCES dbo.AppUser (UserID) ON DELETE CASCADE,
+    CONSTRAINT CK_UserSetting_Theme CHECK (Theme IN (N'light', N'dark', N'system')),
+    CONSTRAINT CK_UserSetting_PageSize CHECK (PageSize BETWEEN 5 AND 100)
+);
+GO
+
+/* ---------- Категории меню ---------- */
 CREATE TABLE dbo.Category (
     CategoryID   INT IDENTITY(1,1) NOT NULL,
     CategoryName NVARCHAR(80)      NOT NULL,
@@ -233,6 +250,8 @@ CREATE TABLE dbo.AuditLog (
     ObjectID   NVARCHAR(40)      NULL,
     IPAddress  NVARCHAR(45)      NULL,
     Details    NVARCHAR(500)     NULL,
+    OldValue   NVARCHAR(MAX)     NULL,
+    NewValue   NVARCHAR(MAX)     NULL,
     CONSTRAINT PK_AuditLog PRIMARY KEY (LogID)
 );
 GO

@@ -257,7 +257,7 @@ CREATE OR ALTER PROCEDURE dbo.sp_GetAuditLog
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT LogID, UserID, LoginName, ActionTime, ActionType, ObjectName, ObjectID, IPAddress, Details
+    SELECT LogID, UserID, LoginName, ActionTime, ActionType, ObjectName, ObjectID, IPAddress, Details, OldValue, NewValue
     FROM dbo.AuditLog
     WHERE (@DateFrom IS NULL OR CAST(ActionTime AS DATE) >= @DateFrom)
       AND (@DateTo IS NULL OR CAST(ActionTime AS DATE) <= @DateTo)
@@ -358,7 +358,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO dbo.AuditLog (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details)
+    INSERT INTO dbo.AuditLog
+        (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details, OldValue, NewValue)
     SELECT  SUSER_SNAME(),
             GETDATE(),
             CASE
@@ -368,9 +369,9 @@ BEGIN
             END,
             N'OrderItem',
             CAST(COALESCE(i.OrderItemID, d.OrderItemID) AS NVARCHAR(40)),
-            CONCAT(N'OrderID=', COALESCE(i.OrderID, d.OrderID),
-                   N'; Quantity=', COALESCE(i.Quantity, 0),
-                   N' (было ', COALESCE(d.Quantity, 0), N')')
+            CONCAT(N'OrderID=', COALESCE(i.OrderID, d.OrderID)),
+            CONCAT(N'DishID=', d.DishID, N'; Quantity=', d.Quantity, N'; Price=', d.PriceAtOrder),
+            CONCAT(N'DishID=', i.DishID, N'; Quantity=', i.Quantity, N'; Price=', i.PriceAtOrder)
     FROM inserted i
     FULL OUTER JOIN deleted d ON d.OrderItemID = i.OrderItemID;
 END
@@ -383,36 +384,103 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO dbo.AuditLog (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details)
+    INSERT INTO dbo.AuditLog
+        (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details, OldValue, NewValue)
     SELECT  SUSER_SNAME(),
             GETDATE(),
             CASE WHEN d.ReservationID IS NULL THEN N'INSERT' ELSE N'UPDATE' END,
             N'Reservation',
             CAST(i.ReservationID AS NVARCHAR(40)),
-            CONCAT(N'TableID=', i.TableID,
-                   N'; Date=', CONVERT(NVARCHAR(19), i.ReservationDate, 120),
+            CONCAT(N'TableID=', i.TableID),
+            CONCAT(N'Date=', CONVERT(NVARCHAR(19), d.ReservationDate, 120),
+                   N'; Guests=', d.GuestsCount,
+                   N'; Status=', d.ReservationStatus),
+            CONCAT(N'Date=', CONVERT(NVARCHAR(19), i.ReservationDate, 120),
+                   N'; Guests=', i.GuestsCount,
                    N'; Status=', i.ReservationStatus)
     FROM inserted i
     LEFT JOIN deleted d ON d.ReservationID = i.ReservationID;
 END
 GO
 
-CREATE OR ALTER TRIGGER dbo.trg_Dish_PriceAudit
+IF OBJECT_ID(N'dbo.trg_Dish_PriceAudit', N'TR') IS NOT NULL
+    DROP TRIGGER dbo.trg_Dish_PriceAudit;
+GO
+
+CREATE OR ALTER TRIGGER dbo.trg_Audit_Dish
 ON dbo.Dish
-AFTER UPDATE
+AFTER INSERT, UPDATE, DELETE
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO dbo.AuditLog (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details)
+    INSERT INTO dbo.AuditLog
+        (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details, OldValue, NewValue)
     SELECT  SUSER_SNAME(),
             GETDATE(),
-            N'PRICE_CHANGE',
+            CASE
+                WHEN d.DishID IS NULL THEN N'INSERT'
+                WHEN i.DishID IS NULL THEN N'DELETE'
+                ELSE N'UPDATE'
+            END,
             N'Dish',
-            CAST(i.DishID AS NVARCHAR(40)),
-            CONCAT(N'Цена изменена: ', d.Price, N' -> ', i.Price)
+            CAST(COALESCE(i.DishID, d.DishID) AS NVARCHAR(40)),
+            N'Изменение карточки блюда',
+            CONCAT(N'Name=', d.DishName, N'; Price=', d.Price, N'; Available=', d.IsAvailable),
+            CONCAT(N'Name=', i.DishName, N'; Price=', i.Price, N'; Available=', i.IsAvailable)
     FROM inserted i
-    JOIN deleted d ON d.DishID = i.DishID
-    WHERE i.Price <> d.Price;
+    FULL OUTER JOIN deleted d ON d.DishID = i.DishID;
+END
+GO
+
+CREATE OR ALTER TRIGGER dbo.trg_Audit_Employee
+ON dbo.Employee
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO dbo.AuditLog
+        (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details, OldValue, NewValue)
+    SELECT  SUSER_SNAME(),
+            GETDATE(),
+            CASE
+                WHEN d.EmployeeID IS NULL THEN N'INSERT'
+                WHEN i.EmployeeID IS NULL THEN N'DELETE'
+                ELSE N'UPDATE'
+            END,
+            N'Employee',
+            CAST(COALESCE(i.EmployeeID, d.EmployeeID) AS NVARCHAR(40)),
+            N'Изменение карточки сотрудника',
+            CONCAT(N'Post=', d.Post, N'; RoleID=', d.RoleID, N'; Active=', d.IsActive),
+            CONCAT(N'Post=', i.Post, N'; RoleID=', i.RoleID, N'; Active=', i.IsActive)
+    FROM inserted i
+    FULL OUTER JOIN deleted d ON d.EmployeeID = i.EmployeeID;
+END
+GO
+
+CREATE OR ALTER TRIGGER dbo.trg_Audit_Customer
+ON dbo.Customer
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO dbo.AuditLog
+        (LoginName, ActionTime, ActionType, ObjectName, ObjectID, Details, OldValue, NewValue)
+    SELECT  SUSER_SNAME(),
+            GETDATE(),
+            CASE
+                WHEN d.CustomerID IS NULL THEN N'INSERT'
+                WHEN i.CustomerID IS NULL THEN N'DELETE'
+                ELSE N'UPDATE'
+            END,
+            N'Customer',
+            CAST(COALESCE(i.CustomerID, d.CustomerID) AS NVARCHAR(40)),
+            N'Изменение карточки клиента (ПДн маскированы)',
+            CONCAT(N'Phone=', LEFT(d.Phone, 4), N'***', RIGHT(d.Phone, 2), N'; Email=', ISNULL(d.Email, N'')),
+            CONCAT(N'Phone=', LEFT(i.Phone, 4), N'***', RIGHT(i.Phone, 2), N'; Email=', ISNULL(i.Email, N''))
+    FROM inserted i
+    FULL OUTER JOIN deleted d ON d.CustomerID = i.CustomerID;
 END
 GO

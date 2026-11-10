@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ресторан «Золотая вилка»: меню, бронирование столиков и онлайн-заказ.">
+  <title>Золотая вилка — ресторан авторской кухни</title>
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img src="img/logo.svg" alt="">
+      <span>Золотая вилка<small>авторская кухня</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="index.html" aria-current="page">Главная</a>
+      <a href="menu.html">Меню</a>
+      <a href="menu.html#reserve">Бронирование</a>
+      <a href="reports.html">Аналитика</a>
+      <a href="brandbook.html">Брендбук</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Переключить тему">☾</button>
+      <a class="btn small" href="login.html">Войти</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow">Санкт-Петербург · с 2018 года</span>
+        <h1>Вкус, который<br><span>стоит запомнить</span></h1>
+        <p class="hero-lead">
+          Авторская кухня, сезонные продукты и атмосфера домашнего тепла.
+          Забронируйте столик онлайн или закажите любимые блюда с доставкой.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="menu.html">Смотреть меню</a>
+          <a class="btn secondary" href="menu.html#reserve">Забронировать столик</a>
+        </div>
+        <div class="hero-note">
+          <div><strong>12 лет</strong> на кухне</div>
+          <div><strong>60+</strong> блюд в меню</div>
+          <div><strong>4.9</strong> рейтинг гостей</div>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="row"><span class="badge">Шеф-повар рекомендует</span></div>
+        <div>
+          <h3>Дегустационный сет «Золотая осень»</h3>
+          <p>Пять подач, локальные продукты и винная пара. Ежедневно с 18:00.</p>
+        </div>
+        <div class="row">
+          <span class="badge">2 900 ₽</span>
+          <span class="badge">5 подач</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="container grid cols-3">
+      <article class="card">
+        <span class="badge accent">01</span>
+        <h3>Сезонное меню</h3>
+        <p class="muted mb-0">Меню обновляется каждые два месяца: только свежие продукты и авторские сочетания.</p>
+      </article>
+      <article class="card">
+        <span class="badge accent">02</span>
+        <h3>Онлайн-бронирование</h3>
+        <p class="muted mb-0">Выберите дату, время и количество гостей — столик закрепится за вами за пару кликов.</p>
+      </article>
+      <article class="card">
+        <span class="badge accent">03</span>
+        <h3>Доставка и самовывоз</h3>
+        <p class="muted mb-0">Соберём заказ за 20 минут. Оплата наличными, картой или онлайн.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Выбор гостей</span>
+          <h2>Блюда, которые заказывают чаще всего</h2>
+          <p>Три позиции, без которых сложно представить ужин в «Золотой вилке».</p>
+        </div>
+        <a class="btn secondary" href="menu.html">Всё меню</a>
+      </div>
+      <div class="grid cols-3">
+        <article class="dish-card">
+          <span class="badge info">Основные блюда</span>
+          <div>
+            <h3>Медальон из телятины</h3>
+            <p class="desc">С картофельным пюре на сливках, соусом демиглас и хрустящими овощами.</p>
+          </div>
+          <div class="spread"><span class="price">1 240 ₽</span><span class="meta">280 г</span></div>
+        </article>
+        <article class="dish-card">
+          <span class="badge info">Салаты</span>
+          <div>
+            <h3>Салат «Золотая вилка»</h3>
+            <p class="desc">Тигровые креветки, авокадо, рукола, кедровый орех и цитрусовый дрессинг.</p>
+          </div>
+          <div class="spread"><span class="price">690 ₽</span><span class="meta">210 г</span></div>
+        </article>
+        <article class="dish-card">
+          <span class="badge info">Десерты</span>
+          <div>
+            <h3>Медовик с солёной карамелью</h3>
+            <p class="desc">Домашний медовый корж, крем на сметане и солёная карамель.</p>
+          </div>
+          <div class="spread"><span class="price">390 ₽</span><span class="meta">150 г</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact">
+    <div class="container card card-cta">
+      <div class="grid cols-2 gap-0">
+        <div class="cta-pane">
+          <span class="eyebrow">Бронирование</span>
+          <h2>Столик на вечер — за 30 секунд</h2>
+          <p class="muted">Укажите дату и время, выберите зал — система сама проверит доступность и закрепит столик.</p>
+          <a class="btn" href="menu.html#reserve">Забронировать</a>
+        </div>
+        <div class="cta-art">
+          <p class="eyebrow">Часы работы</p>
+          <p class="hours-line">Пн–Чт · 12:00–23:00</p>
+          <p class="hours-line">Пт–Сб · 12:00–01:00</p>
+          <p class="hours-line">Вс · 12:00–22:00</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <strong>Ресторан «Золотая вилка»</strong><br>
+      Санкт-Петербург, наб. реки Мойки, 42<br>
+      +7 (812) 555-01-23 · hello@goldfork.ru
+    </div>
+    <div class="pill-list">
+      <a class="badge" href="menu.html">Меню</a>
+      <a class="badge" href="menu.html#reserve">Бронирование</a>
+      <a class="badge" href="reports.html">Аналитика</a>
+      <a class="badge" href="brandbook.html">Брендбук</a>
+    </div>
+    <div class="small">© 2026 «Золотая вилка». Учебный проект.</div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+</body>
+</html>

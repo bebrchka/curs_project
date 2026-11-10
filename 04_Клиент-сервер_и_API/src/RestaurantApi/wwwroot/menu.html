@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Меню ресторана «Золотая вилка», онлайн-заказ и бронирование столиков.">
+  <title>Меню — Золотая вилка</title>
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img src="img/logo.svg" alt="">
+      <span>Золотая вилка<small>авторская кухня</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="index.html">Главная</a>
+      <a href="menu.html" aria-current="page">Меню</a>
+      <a href="#reserve">Бронирование</a>
+      <a href="reports.html">Аналитика</a>
+      <a href="brandbook.html">Брендбук</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Переключить тему">☾</button>
+      <a class="btn small" href="login.html">Войти</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section compact">
+    <div class="container">
+      <span class="eyebrow">Сезонное меню · 2026</span>
+      <div class="section-head">
+        <div>
+          <h1>Меню ресторана</h1>
+          <p>Выберите блюда и оформите заказ на вынос или доставку. Для ужина в зале забронируйте столик ниже.</p>
+        </div>
+        <div class="row">
+          <span class="badge success">Свежие продукты</span>
+          <span class="badge">Обновляется сезонно</span>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="search">
+          <input id="menuSearch" type="search" placeholder="Поиск по меню (клавиша /)" autocomplete="off" aria-label="Поиск по меню">
+        </div>
+        <div class="chips" id="categoryChips"></div>
+      </div>
+
+      <div class="grid cols-3" id="menuGrid" aria-live="polite">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact" id="cartSection">
+    <div class="container">
+      <div class="card" id="cart">
+        <div class="spread">
+          <h2 class="mt-0 mb-0">Ваш заказ</h2>
+          <span class="badge" id="cartCount">0 позиций</span>
+        </div>
+        <div class="cart-items" id="cartItems">
+          <p class="muted small mb-0">Корзина пуста. Добавьте блюда из меню.</p>
+        </div>
+        <div class="cart-total"><span>Итого</span><span id="cartTotal">0 ₽</span></div>
+        <button class="btn block" id="checkoutBtn" type="button" disabled>Оформить заказ</button>
+        <p class="hint mb-0">Оплата наличными, картой или онлайн при получении.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="reserve">
+    <div class="container">
+      <div class="grid cols-2">
+        <div>
+          <span class="eyebrow">Бронирование</span>
+          <h2>Забронируйте столик</h2>
+          <p class="muted">Оставьте контакты и выберите удобное время. Мы подтвердим бронь по телефону.</p>
+          <div class="notice">
+            <strong>Обратите внимание:</strong> бронирование доступно не ранее чем через 30 минут.
+            Столик закрепляется на 2 часа.
+          </div>
+        </div>
+        <form class="card form-grid" id="reservationForm" novalidate>
+          <div class="field">
+            <label for="resLastName">Фамилия *</label>
+            <input id="resLastName" name="lastName" required placeholder="Иванов">
+          </div>
+          <div class="field">
+            <label for="resFirstName">Имя *</label>
+            <input id="resFirstName" name="firstName" required placeholder="Иван">
+          </div>
+          <div class="field">
+            <label for="resPhone">Телефон *</label>
+            <input id="resPhone" name="phone" required placeholder="+7 (999) 123-45-67" inputmode="tel">
+          </div>
+          <div class="field">
+            <label for="resDate">Дата *</label>
+            <input id="resDate" name="date" type="date" required>
+          </div>
+          <div class="field">
+            <label for="resTime">Время *</label>
+            <input id="resTime" name="time" type="time" required value="19:00">
+          </div>
+          <div class="field">
+            <label for="resGuests">Гостей *</label>
+            <input id="resGuests" name="guests" type="number" min="1" max="20" value="2" required>
+          </div>
+          <div class="field">
+            <label for="resTable">Столик</label>
+            <select id="resTable" name="table">
+              <option value="">Подберём автоматически</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="resNotes">Пожелания</label>
+            <textarea id="resNotes" name="notes" placeholder="Например, столик у окна или детское кресло"></textarea>
+          </div>
+          <div class="full">
+            <div class="error-text" id="resError"></div>
+            <button class="btn block" type="submit">Забронировать столик</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-backdrop" id="orderModal" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="orderModalTitle">Оформление заказа</h2>
+      <button class="icon-btn" type="button" data-close-modal aria-label="Закрыть">✕</button>
+    </div>
+    <form id="orderForm" class="form-grid" novalidate>
+      <div class="field">
+        <label for="orderLastName">Фамилия *</label>
+        <input id="orderLastName" name="lastName" required placeholder="Иванов">
+      </div>
+      <div class="field">
+        <label for="orderFirstName">Имя *</label>
+        <input id="orderFirstName" name="firstName" required placeholder="Иван">
+      </div>
+      <div class="field">
+        <label for="orderPhone">Телефон *</label>
+        <input id="orderPhone" name="phone" required placeholder="+7 (999) 123-45-67" inputmode="tel">
+      </div>
+      <div class="field">
+        <label for="orderEmail">E-mail</label>
+        <input id="orderEmail" name="email" type="email" placeholder="guest@example.com">
+      </div>
+      <div class="field">
+        <label for="orderType">Тип заказа *</label>
+        <select id="orderType" name="type">
+          <option value="На вынос">На вынос</option>
+          <option value="Доставка">Доставка</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label for="orderNotes">Комментарий</label>
+        <textarea id="orderNotes" name="notes" placeholder="Адрес доставки, пожелания по подаче"></textarea>
+      </div>
+      <div class="full">
+        <div class="notice" id="orderSummary"></div>
+        <div class="error-text" id="orderError"></div>
+        <button class="btn block" type="submit">Подтвердить заказ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      <strong>Ресторан «Золотая вилка»</strong><br>
+      Санкт-Петербург, наб. реки Мойки, 42<br>
+      +7 (812) 555-01-23 · hello@goldfork.ru
+    </div>
+    <div class="pill-list">
+      <a class="badge" href="index.html">Главная</a>
+      <a class="badge" href="#reserve">Бронирование</a>
+      <a class="badge" href="reports.html">Аналитика</a>
+      <a class="badge" href="admin.html">Панель управления</a>
+    </div>
+    <div class="small">© 2026 «Золотая вилка». Учебный проект.</div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
