@@ -24,7 +24,7 @@ document.getElementById("loginForm").addEventListener("submit", async (event) =>
     });
     setSession(result.token, result.user);
     toast(`Добро пожаловать, ${result.user.employeeName || result.user.login}!`, "success");
-    location.href = ["Director", "DatabaseAdmin", "Accountant"].includes(result.user.role)
+    location.href = !window.grandCloudApi && ["Director", "DatabaseAdmin", "Accountant"].includes(result.user.role)
       ? "reports.html"
       : "admin.html";
   } catch (error) {

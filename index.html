@@ -153,7 +153,7 @@
           <form id="reviewForm" class="form-grid" novalidate>
             <div class="field"><label for="reviewLastName">Фамилия *</label><input id="reviewLastName" name="lastName" required pattern="[А-Яа-яЁёA-Za-z][А-Яа-яЁёA-Za-z\s\-’']{0,48}[А-Яа-яЁёA-Za-z]" minlength="2" maxlength="50"></div>
             <div class="field"><label for="reviewFirstName">Имя *</label><input id="reviewFirstName" name="firstName" required pattern="[А-Яа-яЁёA-Za-z][А-Яа-яЁёA-Za-z\s\-’']{0,48}[А-Яа-яЁёA-Za-z]" minlength="2" maxlength="50"></div>
-            <div class="field"><label for="reviewPhone">Телефон *</label><input id="reviewPhone" name="phone" required inputmode="tel" autocomplete="tel" pattern="(?:\+7|8)\s?\(?\d{3}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}" minlength="11" maxlength="18" placeholder="+7 (999) 123-45-67"></div>
+            <div class="field"><label for="reviewPhone">Телефон *</label><input id="reviewPhone" name="phone" type="tel" required inputmode="tel" autocomplete="tel" pattern="(?:\+7|8) ?(?:\([0-9]{3}\)|[0-9]{3})(?: |-)?[0-9]{3}(?: |-)?[0-9]{2}(?: |-)?[0-9]{2}" minlength="11" maxlength="18" placeholder="+79152254722 или 89152254722"></div>
             <div class="field"><label for="reviewRating">Оценка *</label><select id="reviewRating" name="rating"><option value="5">5 — отлично</option><option value="4">4 — хорошо</option><option value="3">3 — нормально</option><option value="2">2 — есть замечания</option><option value="1">1 — плохо</option></select></div>
             <div class="field full"><label for="reviewComment">Отзыв *</label><textarea id="reviewComment" name="comment" required minlength="5" maxlength="500" placeholder="Что понравилось, что улучшить?"></textarea></div>
             <div class="full"><div class="error-text" id="reviewError"></div><button class="btn block" type="submit">Отправить отзыв</button></div>
@@ -185,7 +185,8 @@
   </div>
 </footer>
 
-<script src="js/api.js"></script>
-<script src="js/reviews.js?v=20261124-reviews"></script>
+<script src="js/supabase-api.js?v=20261124-cloud1"></script>
+<script src="js/api.js?v=20261124-cloud1"></script>
+<script src="js/reviews.js?v=20261124-cloud1"></script>
 </body>
 </html>

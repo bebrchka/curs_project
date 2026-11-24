@@ -29,14 +29,13 @@ async function loadMenu() {
     const [menu, categories, tables] = await Promise.all([
       api("/api/menu"),
       api("/api/categories"),
-      api("/api/tables").catch(() => [])
+      api("/api/public/tables").catch(() => [])
     ]);
     state.menu = menu;
     state.categories = categories;
     state.tables = tables;
     renderCategories();
     renderMenu();
-    fillReservationDefaults();
   } catch (error) {
     document.getElementById("menuGrid").innerHTML =
       `<div class="empty"><strong>Не удалось загрузить меню</strong>${escapeHtml(error.message)}</div>`;
@@ -45,11 +44,11 @@ async function loadMenu() {
 
 function renderCategories() {
   const container = document.getElementById("categoryChips");
-  const items = [{ CategoryId: null, CategoryName: "Всё меню" }, ...state.categories];
+  const items = [{ categoryId: null, categoryName: "Всё меню" }, ...state.categories];
   container.innerHTML = items.map((category) => `
-    <button class="chip ${state.categoryId === category.CategoryId ? "active" : ""}"
-            type="button" data-category="${category.CategoryId ?? ""}">
-      ${escapeHtml(category.CategoryName)}
+    <button class="chip ${state.categoryId === category.categoryId ? "active" : ""}"
+            type="button" data-category="${category.categoryId ?? ""}">
+      ${escapeHtml(category.categoryName)}
     </button>`).join("");
 
   container.querySelectorAll("[data-category]").forEach((button) => {
@@ -182,10 +181,7 @@ async function submitOrder(event) {
   const firstName = form.firstName.value.trim();
   const phone = form.phone.value.trim();
   const email = form.email.value.trim();
-  if (!form.checkValidity()) {
-    errorBox.textContent = "Проверьте фамилию, имя и телефон: используйте буквы и телефон формата +7 (999) 123-45-67.";
-    return;
-  }
+  if (!validateCustomerForm(form, errorBox)) return;
 
   const button = form.querySelector("button[type=submit]");
   button.disabled = true;
@@ -288,10 +284,7 @@ async function submitReservation(event) {
   const date = form.date.value;
   const time = form.time.value;
   const guests = Number(form.guests.value);
-  if (!form.checkValidity()) {
-    errorBox.textContent = "Проверьте фамилию, имя и телефон: используйте буквы и телефон формата +7 (999) 123-45-67.";
-    return;
-  }
+  if (!validateCustomerForm(form, errorBox)) return;
 
   const button = form.querySelector("button[type=submit]");
   button.disabled = true;
@@ -377,4 +370,5 @@ document.addEventListener("keydown", (event) => {
 });
 
 renderCart();
+fillReservationDefaults();
 loadMenu();

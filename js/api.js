@@ -1,6 +1,67 @@
-const TOKEN_KEY = "restaurant_token";
-const USER_KEY = "restaurant_user";
+const TOKEN_KEY = window.grandCloudApi?.storageKeys.token || "restaurant_token";
+const USER_KEY = window.grandCloudApi?.storageKeys.user || "restaurant_user";
 const THEME_KEY = "restaurant_theme";
+
+const PHONE_PATTERN = String.raw`(?:\+7|8) ?(?:\([0-9]{3}\)|[0-9]{3})(?: |-)?[0-9]{3}(?: |-)?[0-9]{2}(?: |-)?[0-9]{2}`;
+const PHONE_ERROR = "Введите 11 цифр: +79152254722, 89152254722 или +7 (915) 225-47-22.";
+
+function isValidRussianPhone(value) {
+  return new RegExp(`^(?:${PHONE_PATTERN})$`).test(String(value ?? "").trim());
+}
+
+function cleanPhoneInput(value) {
+  return String(value).replaceAll("\u00a0", " ").replace(/[^0-9+() \-]/g, "").replace(/(?!^)\+/g, "");
+}
+
+function validatePhoneInput(input) {
+  input.setCustomValidity(input.value && !isValidRussianPhone(input.value) ? PHONE_ERROR : "");
+}
+
+function initPhoneInputs() {
+  document.querySelectorAll('input[name="phone"]').forEach((input) => {
+    input.type = "tel";
+    input.inputMode = "tel";
+    input.autocomplete = "tel";
+    input.pattern = PHONE_PATTERN;
+    input.minLength = 11;
+    input.maxLength = 18;
+    input.title = PHONE_ERROR;
+    input.addEventListener("input", () => {
+      const caret = input.selectionStart;
+      const cleaned = cleanPhoneInput(input.value);
+      if (cleaned !== input.value) {
+        const position = cleanPhoneInput(input.value.slice(0, caret ?? input.value.length)).length;
+        input.value = cleaned;
+        input.setSelectionRange(position, position);
+      }
+      validatePhoneInput(input);
+    });
+    input.addEventListener("blur", () => {
+      input.value = input.value.trim();
+      validatePhoneInput(input);
+    });
+    const hint = document.createElement("small");
+    hint.id = `${input.id}Hint`;
+    hint.className = "small muted";
+    hint.textContent = "11 цифр: +79152254722 или 89152254722. Пробелы и скобки необязательны.";
+    input.setAttribute("aria-describedby", hint.id);
+    input.after(hint);
+  });
+}
+
+function validateCustomerForm(form, errorBox) {
+  form.querySelectorAll('input[name="phone"]').forEach((input) => {
+    input.value = input.value.trim();
+    validatePhoneInput(input);
+  });
+  if (form.checkValidity()) return true;
+  const invalid = form.querySelector(":invalid");
+  const label = invalid?.labels?.[0]?.textContent.replace("*", "").trim() || "Данные";
+  errorBox.textContent = `${label}: ${invalid?.validationMessage || "проверьте введённое значение."}`;
+  invalid?.focus();
+  invalid?.reportValidity();
+  return false;
+}
 
 function getToken() {
   return localStorage.getItem(TOKEN_KEY);
@@ -22,6 +83,7 @@ function setSession(token, user) {
 function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  window.grandCloudApi?.clearSession();
 }
 
 function requireAuth() {
@@ -40,7 +102,7 @@ const API_BASE = (() => {
     : location.origin;
 })();
 
-const IS_STATIC_PREVIEW = !API_BASE &&
+const IS_STATIC_PREVIEW = !window.grandCloudApi && !API_BASE &&
   (location.protocol === "file:" || location.hostname.endsWith("github.io"));
 
 function apiUrl(path) {
@@ -55,6 +117,17 @@ function apiUrl(path) {
 }
 
 async function api(path, options = {}) {
+  if (window.grandCloudApi) {
+    try {
+      return await window.grandCloudApi.request(path, options);
+    } catch (error) {
+      if (error.status === 401 && getToken()) {
+        clearSession();
+        if (!location.pathname.endsWith("login.html")) location.href = "login.html";
+      }
+      throw error;
+    }
+  }
   const url = apiUrl(path);
   const headers = { ...(options.headers || {}) };
   if (!(options.body instanceof FormData) && options.body !== undefined) {
@@ -189,6 +262,16 @@ document.addEventListener("keydown", (event) => {
 });
 
 initTheme();
+initPhoneInputs();
+
+if (window.grandCloudApi && document.getElementById("loginForm")) {
+  const field = document.getElementById("login");
+  field.type = "email";
+  field.autocomplete = "username";
+  field.placeholder = "email сотрудника";
+  const label = document.querySelector('label[for="login"]');
+  if (label) label.textContent = "Email сотрудника";
+}
 
 if (IS_STATIC_PREVIEW) {
   const notice = document.createElement("aside");

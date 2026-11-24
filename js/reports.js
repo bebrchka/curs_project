@@ -347,25 +347,8 @@ async function exportReport(report) {
   const button = document.querySelector(`[data-export="${report}"]`);
   if (button) button.disabled = true;
   try {
-    const response = await fetch(apiUrl(`/api/reports/export/${report}.csv${buildReportQuery()}`), {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    });
-    if (response.status === 401) {
-      clearSession();
-      location.href = "login.html";
-      return;
-    }
-    if (!response.ok) {
-      let message = `Ошибка ${response.status}`;
-      try {
-        const data = await response.json();
-        message = data.message || data.error || message;
-      } catch {
-        try { message = await response.text() || message; } catch { /* ignore */ }
-      }
-      throw new Error(message);
-    }
-    const blob = await response.blob();
+    const csv = await api(`/api/reports/export/${report}.csv${buildReportQuery()}`);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;

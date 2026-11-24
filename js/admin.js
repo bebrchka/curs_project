@@ -4,8 +4,8 @@ if (!requireAuth()) {
 }
 
 const role = user?.role || "";
-const hasFullAccess = role === "Director" || role === "DatabaseAdmin";
-const canManage = hasFullAccess;
+const hasFullAccess = role === "Director";
+const canManage = hasFullAccess || role === "DatabaseAdmin";
 const canCreateOrders = hasFullAccess || role === "Waiter";
 const canPay = hasFullAccess || role === "Accountant";
 const canKitchen = hasFullAccess || role === "Chef";
@@ -36,13 +36,13 @@ const panels = {
 };
 
 const tabAccess = {
-  orders: true,
-  reservations: true,
-  tables: true,
-  dishes: true,
-  customers: canManage,
+  orders: ["Director", "Waiter", "Chef", "Accountant"].includes(role),
+  reservations: ["Director", "Waiter"].includes(role),
+  tables: ["Director", "Waiter", "DatabaseAdmin"].includes(role),
+  dishes: ["Director", "DatabaseAdmin", "Chef", "Waiter"].includes(role),
+  customers: ["Director", "DatabaseAdmin", "Waiter", "Accountant"].includes(role),
   employees: canManage,
-  audit: hasFullAccess,
+  audit: canManage,
   settings: true
 };
 
@@ -423,9 +423,9 @@ function renderReservations() {
     <td>${escapeHtml(reservation.manager)}</td>
     <td>${statusBadge(reservation.reservationStatus)}</td>
     <td class="actions">
-      ${reservation.reservationStatus === "Активна" && canManage
+      ${reservation.reservationStatus === "Активна" && canCreateOrders
         ? `<button class="btn secondary" data-res-status="${reservation.reservationId}" data-next="Выполнена">Выполнена</button>` : ""}
-      ${reservation.reservationStatus === "Активна" && canManage
+      ${reservation.reservationStatus === "Активна" && canCreateOrders
         ? `<button class="btn danger" data-res-cancel="${reservation.reservationId}">Отмена</button>` : ""}
     </td></tr>`).join("");
 
@@ -459,7 +459,7 @@ async function cancelReservation(id) {
   }
 }
 
-document.getElementById("newReservationBtn").hidden = !canManage;
+document.getElementById("newReservationBtn").hidden = !canCreateOrders;
 document.getElementById("newReservationBtn").addEventListener("click", async () => {
   if (state.tables.length === 0) await loadTablesData();
   const date = new Date();
@@ -483,10 +483,7 @@ document.getElementById("newReservationForm").addEventListener("submit", async (
   errorBox.textContent = "";
   const date = form.date.value;
   const time = form.time.value;
-  if (!form.checkValidity()) {
-    errorBox.textContent = "Проверьте фамилию, имя и телефон.";
-    return;
-  }
+  if (!validateCustomerForm(form, errorBox)) return;
 
   const button = form.querySelector("button[type=submit]");
   button.disabled = true;
@@ -533,7 +530,7 @@ async function loadTables() {
     <article class="card table-card">
       <div class="spread"><span class="table-no">${escapeHtml(table.tableNumber)}</span>${statusBadge(table.tableStatus)}</div>
       <div class="small muted">${escapeHtml(table.hall)} · ${table.seats} мест</div>
-      <div class="row">
+      <div class="row" ${canCreateOrders ? "" : "hidden"}>
         <button class="btn small secondary" data-table="${table.tableId}" data-state="Свободен">Свободен</button>
         <button class="btn small secondary" data-table="${table.tableId}" data-state="Занят">Занят</button>
         <button class="btn small secondary" data-table="${table.tableId}" data-state="Забронирован">Бронь</button>
@@ -707,7 +704,7 @@ async function loadStopList() {
       <td>${item.minStockLeft ? `<span class="badge warning">Да</span>` : "Нет"}</td>
       <td>${item.isEmergency ? `<span class="badge">Лимит ${item.emergencyLimit}</span>` : "—"}</td>
       <td>${formatDate(item.createdAt)}</td>
-      <td class="actions">${canManage ? `<button class="btn small secondary" data-stop-edit="${item.stopItemId}">Изменить</button>` : ""}
+      <td class="actions">${canKitchen ? `<button class="btn small secondary" data-stop-edit="${item.stopItemId}">Изменить</button>` : ""}
         ${canKitchen ? `<button class="btn small danger" data-stop-remove="${item.stopItemId}">Скрыть</button>` : "—"}</td>
     </tr>`).join("") || `<tr><td colspan="7" class="muted">Стоп-лист пуст.</td></tr>`;
     body.querySelectorAll("[data-stop-edit]").forEach((button) =>
@@ -958,6 +955,25 @@ document.getElementById("settingsForm").addEventListener("submit", async (event)
 });
 
 document.getElementById("ordersFilterBtn").addEventListener("click", loadOrders);
+document.getElementById("exportMenuBtn")?.addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    const csv = await api("/api/export/menu.csv");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "menu.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    toast(error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+});
 document.getElementById("reservationsFilterBtn").addEventListener("click", loadReservations);
 document.getElementById("auditFilterBtn").addEventListener("click", loadAudit);
 document.getElementById("ordersSearch").addEventListener("input", renderOrders);
@@ -1009,23 +1025,4 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-loadCurrentTab();
-document.getElementById("exportMenuBtn")?.addEventListener("click", async (event) => {
-  const button = event.currentTarget;
-  button.disabled = true;
-  try {
-    const csv = await api("/api/export/menu.csv");
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "menu.csv";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    toast(error.message, "error");
-  } finally {
-    button.disabled = false;
-  }
-});
+switchTab(Object.keys(tabAccess).find((name) => tabAccess[name]) || "settings");

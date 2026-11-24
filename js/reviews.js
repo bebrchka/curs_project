@@ -33,10 +33,7 @@ reviewForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
   reviewError.textContent = "";
-  if (!form.checkValidity()) {
-    reviewError.textContent = "Проверьте имя, фамилию, телефон, оценку и текст отзыва.";
-    return;
-  }
+  if (!validateCustomerForm(form, reviewError)) return;
   const payload = {
     lastName: form.lastName.value.trim(),
     firstName: form.firstName.value.trim(),
