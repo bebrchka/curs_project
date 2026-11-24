@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Аналитика и отчёты ресторана «Гранд».">
+  <title>Аналитика — Гранд</title>
+  <link rel="icon" href="img/logo.svg?v=20261124-blue" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css?v=20261124-blue">
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img src="img/logo.svg?v=20261124-blue" alt="">
+      <span>Гранд<small>аналитика</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="admin.html">Панель</a>
+      <a href="operations.html">Операции</a>
+      <a href="reports.html" aria-current="page">Отчёты</a>
+      <a href="menu.html">Меню сайта</a>
+      <a href="brandbook.html">Брендбук</a>
+    </nav>
+    <div class="header-actions">
+      <span class="badge" id="userBadge">—</span>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Переключить тему">☾</button>
+      <button class="btn small secondary" id="logoutBtn" type="button">Выйти</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="section compact">
+  <div class="container">
+    <div class="spread">
+      <div>
+        <span class="eyebrow">Dashboard</span>
+        <h1>Аналитика ресторана</h1>
+        <p class="muted mb-0">Выручка, популярные блюда, загрузка зала и эффективность сотрудников.</p>
+      </div>
+      <div class="row">
+        <a class="btn secondary small" href="admin.html">В панель</a>
+        <button class="btn small" id="refreshBtn" type="button">Обновить</button>
+      </div>
+    </div>
+
+    <div class="card flat">
+      <div class="filters">
+        <div class="field"><label for="dateFrom">С даты</label><input id="dateFrom" type="date"></div>
+        <div class="field"><label for="dateTo">По дату</label><input id="dateTo" type="date"></div>
+        <div class="field"><label>&nbsp;</label><button class="btn" id="applyBtn" type="button">Применить</button></div>
+        <div class="field"><label>Быстрый выбор</label>
+          <div class="row">
+            <button class="btn small secondary" type="button" data-days="7">7 дней</button>
+            <button class="btn small secondary" type="button" data-days="30">30 дней</button>
+            <button class="btn small secondary" type="button" data-days="90">90 дней</button>
+          </div>
+        </div>
+        <div class="field"><label>Экспорт</label>
+          <div class="row">
+            <button class="btn small secondary" type="button" data-export="revenue">Выручка</button>
+            <button class="btn small secondary" type="button" data-export="popular-dishes">Блюда</button>
+            <button class="btn small secondary" type="button" data-export="waiters">Официанты</button>
+            <button class="btn small secondary" type="button" data-export="table-load">Столики</button>
+            <button class="btn small secondary" type="button" data-export="hourly">Часы</button>
+          </div>
+        </div>
+      </div>
+      <div class="error-text" id="reportsError"></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="label">Выручка</div><div class="value primary" id="kpiRevenue">—</div></div>
+        <div class="kpi"><div class="label">Заказов</div><div class="value" id="kpiOrders">—</div></div>
+        <div class="kpi"><div class="label">Средний чек</div><div class="value" id="kpiAvgCheck">—</div></div>
+        <div class="kpi"><div class="label">Бронирований</div><div class="value" id="kpiReservations">—</div></div>
+        <div class="kpi"><div class="label">Активных заказов</div><div class="value" id="kpiActive">—</div></div>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>Выручка по дням</h3>
+        <div class="chart-box"><canvas id="revenueChart" aria-label="График выручки по дням" role="img"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Топ блюд по количеству</h3>
+        <div class="chart-box"><canvas id="dishesChart" aria-label="График популярных блюд" role="img"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Нагрузка по часам</h3>
+        <div class="chart-box"><canvas id="hourlyChart" aria-label="График нагрузки по часам" role="img"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Статусы заказов</h3>
+        <div class="chart-box"><canvas id="statusChart" aria-label="Диаграмма статусов заказов" role="img"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>Эффективность официантов</h3>
+        <div class="table-wrap">
+          <table><thead><tr><th>Сотрудник</th><th>Заказов</th><th>Выручка</th><th>Средний чек</th></tr></thead>
+            <tbody id="waitersBody"><tr><td colspan="4" class="muted">Загрузка…</td></tr></tbody></table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Загрузка столиков</h3>
+        <div class="table-wrap">
+          <table><thead><tr><th>Столик</th><th>Зал</th><th>Заказов</th><th>Выручка</th></tr></thead>
+            <tbody id="tablesBody"><tr><td colspan="4" class="muted">Загрузка…</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>Ресторан «Гранд» · отчётность</div>
+    <div class="pill-list"><a class="badge" href="admin.html">Панель</a><a class="badge" href="menu.html">Публичное меню</a></div>
+    <div class="small">© 2026 · Учебный проект</div>
+  </div>
+</footer>
+
+<script src="lib/chart.umd.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/reports.js"></script>
+</body>
+</html>

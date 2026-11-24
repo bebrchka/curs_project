@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Гранд">
+  <circle cx="32" cy="32" r="31" fill="#2563eb"/>
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#14b8a6" stroke-width="2"/>
+  <path d="M22 14v15c0 4 2.6 7 6 7v14h4V36c3.4 0 6-3 6-7V14h-4v13h-2V14h-4v13h-2V14z" fill="#f3f7fc"/>
+  <path d="M44 14c-3 0-5 5-5 12 0 5 2 8 4 9v15h4V14z" fill="#14b8a6"/>
+</svg>

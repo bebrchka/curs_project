@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Брендбук ресторана «Гранд»: логотип, палитра, типографика и компоненты интерфейса.">
+  <title>Брендбук — Гранд</title>
+  <link rel="icon" href="img/logo.svg?v=20261124-blue" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css?v=20261124-blue">
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img src="img/logo.svg?v=20261124-blue" alt="">
+      <span>Гранд<small>брендбук</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="index.html">Главная</a>
+      <a href="menu.html">Меню</a>
+      <a href="reports.html">Аналитика</a>
+      <a href="brandbook.html" aria-current="page">Брендбук</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Переключить тему">☾</button>
+      <a class="btn small" href="login.html">Войти</a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section compact">
+    <div class="container">
+      <div class="spread">
+        <div>
+          <span class="eyebrow">Фирменный стиль · 2026</span>
+          <h1>Брендбук «Гранда»</h1>
+          <p class="muted mb-0">Логотип, палитра, типографика и правила оформления интерфейса ресторана авторской кухни.</p>
+        </div>
+        <div class="row">
+          <a class="btn secondary small" href="index.html">На сайт</a>
+          <a class="btn small" href="menu.html">Открыть меню</a>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <article class="card">
+          <h2>Логотип</h2>
+          <p class="muted">Основной знак — стилизованная вилка в сине-бирюзовом медальоне. Используется в шапке сайта, favicon и документации.</p>
+          <div class="grid cols-2">
+            <div class="logo-preview">
+              <img src="img/logo.svg?v=20261124-blue" alt="Логотип на светлом фоне">
+              <div><strong>Гранд</strong><br><span>авторская кухня</span></div>
+            </div>
+            <div class="logo-preview dark">
+              <img src="img/logo.svg?v=20261124-blue" alt="Логотип на тёмном фоне">
+              <div><strong>Гранд</strong><br><span>авторская кухня</span></div>
+            </div>
+          </div>
+          <div class="notice warning">Не растягивайте знак, не меняйте пропорции и не добавляйте обводки. Охранное поле равно высоте буквы «З».</div>
+        </article>
+
+        <article class="card">
+          <h2>Палитра</h2>
+          <p class="muted">Основные цвета задают свежую сине-бирюзовую атмосферу бренда «Гранд»; служебные оттенки помогают считывать статусы.</p>
+          <div class="swatch-grid">
+            <div class="swatch"><div class="color color-primary"></div><div class="meta"><strong>Primary</strong><br><code>#2563EB</code></div></div>
+            <div class="swatch"><div class="color color-primary-strong"></div><div class="meta"><strong>Primary strong</strong><br><code>#1D4ED8</code></div></div>
+            <div class="swatch"><div class="color color-accent"></div><div class="meta"><strong>Accent</strong><br><code>#14B8A6</code></div></div>
+            <div class="swatch"><div class="color color-accent-soft"></div><div class="meta"><strong>Accent soft</strong><br><code>#CCFBF1</code></div></div>
+            <div class="swatch"><div class="color color-bg"></div><div class="meta"><strong>Background</strong><br><code>var(--bg)</code></div></div>
+            <div class="swatch"><div class="color color-surface"></div><div class="meta"><strong>Surface</strong><br><code>var(--surface)</code></div></div>
+            <div class="swatch"><div class="color color-surface-2"></div><div class="meta"><strong>Surface 2</strong><br><code>var(--surface-2)</code></div></div>
+            <div class="swatch"><div class="color color-border"></div><div class="meta"><strong>Border</strong><br><code>var(--border)</code></div></div>
+            <div class="swatch"><div class="color color-text"></div><div class="meta"><strong>Text</strong><br><code>var(--text)</code></div></div>
+            <div class="swatch"><div class="color color-muted"></div><div class="meta"><strong>Muted</strong><br><code>var(--muted)</code></div></div>
+            <div class="swatch"><div class="color color-success"></div><div class="meta"><strong>Success</strong><br><code>#16A34A</code></div></div>
+            <div class="swatch"><div class="color color-warning"></div><div class="meta"><strong>Warning</strong><br><code>#D97706</code></div></div>
+            <div class="swatch"><div class="color color-danger"></div><div class="meta"><strong>Danger</strong><br><code>#6D5BD0</code></div></div>
+            <div class="swatch"><div class="color color-info"></div><div class="meta"><strong>Info</strong><br><code>#0EA5E9</code></div></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="grid cols-2">
+        <article class="card">
+          <h2>Типографика</h2>
+          <p class="muted">Заголовки — Georgia, основной текст и интерфейс — Segoe UI. Контраст и размеры проверены для светлой и тёмной тем.</p>
+          <div class="type-sample">
+            <div class="label">H1 · Georgia · clamp(2.3rem, 5vw, 3.6rem)</div>
+            <h1>Вкус, который стоит запомнить</h1>
+          </div>
+          <div class="type-sample">
+            <div class="label">H2 · Georgia · 2rem</div>
+            <h2>Сезонное меню</h2>
+          </div>
+          <div class="type-sample">
+            <div class="label">H3 · Georgia · 1.35rem</div>
+            <h3>Дегустационный сет</h3>
+          </div>
+          <div class="type-sample">
+            <div class="label">Body · Segoe UI · 1rem / 1.55</div>
+            <p>Авторская кухня, сезонные продукты и атмосфера домашнего тепла. Бронирование столика занимает меньше минуты.</p>
+          </div>
+          <div class="type-sample">
+            <div class="label">Caption · Segoe UI · 0.76rem</div>
+            <p class="small mb-0">г. Москва · Неженская 7 · ежедневно с 12:00</p>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>Токены интерфейса</h2>
+          <p class="muted">Единые значения отступов, радиусов и теней используются во всех страницах и компонентах.</p>
+          <div class="token-list">
+            <div class="token-row"><span>Радиус карточек</span><code>14 px</code></div>
+            <div class="token-row"><span>Радиус кнопок и полей</span><code>9 px</code></div>
+            <div class="token-row"><span>Ширина контейнера</span><code>1180 px</code></div>
+             <div class="token-row"><span>Тень карточки</span><code>0 10px 30px rgba(15, 31, 61, 0.08)</code></div>
+             <div class="token-row"><span>Тень модального окна</span><code>0 22px 60px rgba(15, 31, 61, 0.16)</code></div>
+            <div class="token-row"><span>Базовый межстрочный интервал</span><code>1.55</code></div>
+            <div class="token-row"><span>Шрифт заголовков</span><code>Georgia, serif</code></div>
+            <div class="token-row"><span>Шрифт интерфейса</span><code>Segoe UI, Arial, sans-serif</code></div>
+          </div>
+          <div class="notice">Все страницы поддерживают светлую и тёмную темы. Переключение доступно в шапке сайта и сохраняется в браузере.</div>
+        </article>
+      </div>
+
+      <article class="card">
+        <h2>Компоненты</h2>
+         <p class="muted">Кнопки и статусы используют одну систему оттенков. Основное действие — синяя кнопка, второстепенное — светлая с рамкой.</p>
+        <div class="row mb-0">
+          <button class="btn" type="button">Основное действие</button>
+          <button class="btn secondary" type="button">Второстепенное</button>
+          <button class="btn accent" type="button">Акцент</button>
+          <button class="btn danger" type="button">Удалить</button>
+          <button class="btn secondary" type="button" disabled>Недоступно</button>
+        </div>
+        <hr class="divider">
+        <div class="row">
+          <span class="badge">Оформлен</span>
+          <span class="badge info">Готовится</span>
+          <span class="badge success">Готов</span>
+          <span class="badge warning">Ожидает оплаты</span>
+          <span class="badge danger">Отменён</span>
+          <span class="badge accent">Шеф рекомендует</span>
+        </div>
+        <hr class="divider">
+        <div class="grid cols-2">
+          <div class="field"><label for="brandInput">Поле ввода</label><input id="brandInput" type="text" placeholder="Например, имя гостя"></div>
+          <div class="notice warning"><strong>Важно.</strong> Не используйте больше двух акцентных цветов в одном блоке: интерфейс должен оставаться спокойным.</div>
+        </div>
+      </article>
+
+      <div class="grid cols-3">
+        <article class="card">
+          <span class="badge accent">01</span>
+          <h3>Тон общения</h3>
+          <p class="muted mb-0">Дружелюбно, уверенно и без канцелярита. Обращаемся к гостю на «вы», говорим о еде и впечатлениях простыми словами.</p>
+        </article>
+        <article class="card">
+          <span class="badge accent">02</span>
+          <h3>Фотографии</h3>
+          <p class="muted mb-0">Тёплый свет, крупные планы блюд, натуральные цвета. Избегаем холодных фильтров и пересвета.</p>
+        </article>
+        <article class="card">
+          <span class="badge accent">03</span>
+          <h3>Доступность</h3>
+          <p class="muted mb-0">Контраст текста не ниже 4.5:1, зоны нажатия от 44 px, все действия доступны с клавиатуры и имеют подписи.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div><strong>Ресторан «Гранд»</strong><br>г. Москва, Неженская 7</div>
+    <div class="pill-list">
+      <a class="badge" href="index.html">Главная</a>
+      <a class="badge" href="menu.html">Меню</a>
+      <a class="badge" href="reports.html">Аналитика</a>
+    </div>
+    <div class="small">© 2026 · Учебный проект</div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+</body>
+</html>

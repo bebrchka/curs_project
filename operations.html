@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Операционные разделы: склад, закупки, доставка, качество, финансы и персонал ресторана «Гранд».">
+  <title>Операции — Гранд</title>
+  <link rel="icon" href="img/logo.svg?v=20261124-blue" type="image/svg+xml">
+  <link rel="stylesheet" href="css/site.css?v=20261124-blue">
+</head>
+<body>
+<a class="skip-link" href="#main">К содержимому</a>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img src="img/logo.svg?v=20261124-blue" alt="">
+      <span>Гранд<small>операции</small></span>
+    </a>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="admin.html">Панель</a>
+      <a href="operations.html" aria-current="page">Операции</a>
+      <a href="reports.html">Отчёты</a>
+      <a href="menu.html">Меню сайта</a>
+      <a href="brandbook.html">Брендбук</a>
+    </nav>
+    <div class="header-actions">
+      <span class="badge" id="userBadge">—</span>
+      <button class="icon-btn" id="themeToggle" type="button" aria-label="Переключить тему">☾</button>
+      <button class="btn small secondary" id="logoutBtn" type="button">Выйти</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="section compact">
+  <div class="container">
+    <div class="spread">
+      <div>
+        <span class="eyebrow">Операционный контур</span>
+        <h1>Операции</h1>
+        <p class="muted mb-0" id="welcomeText">Загрузка данных…</p>
+      </div>
+      <div class="row">
+        <button class="btn secondary small" id="refreshBtn" type="button">Обновить <kbd>F5</kbd></button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Операционные разделы">
+      <button class="tab active" type="button" role="tab" data-tab="stock" aria-selected="true">Склад</button>
+      <button class="tab" type="button" role="tab" data-tab="purchases" aria-selected="false">Закупки</button>
+      <button class="tab" type="button" role="tab" data-tab="deliveries" aria-selected="false">Доставка</button>
+      <button class="tab" type="button" role="tab" data-tab="finance" aria-selected="false">Финансы</button>
+      <button class="tab" type="button" role="tab" data-tab="hr" aria-selected="false">Персонал</button>
+    </div>
+
+    <section class="tab-panel active" id="panel-stock" role="tabpanel">
+      <div class="card flat">
+        <div class="spread">
+          <h2 class="mt-0">Остатки на складе</h2>
+          <div class="row">
+            <div class="search"><input id="stockSearch" type="search" placeholder="Номенклатура, артикул"></div>
+            <button class="btn small" id="receiveBtn" type="button">Приход</button>
+            <button class="btn small secondary" id="writeOffBtn" type="button">Списание</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Артикул</th><th>Номенклатура</th><th>Группа</th><th>Остаток</th><th>Резерв</th><th>Доступно</th><th>Минимум</th><th>Статус</th></tr></thead>
+            <tbody id="stockBody"><tr><td colspan="8" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card flat mt">
+        <div class="spread">
+          <h2 class="mt-0">Движения</h2>
+          <button class="btn small secondary" id="movementBtn" type="button">Резерв / Выдача / Возврат</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Дата</th><th>Номенклатура</th><th>Место</th><th>Тип</th><th>Кол-во</th><th>Сотрудник</th><th>Комментарий</th></tr></thead>
+            <tbody id="movementsBody"><tr><td colspan="8" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-purchases" role="tabpanel">
+      <div class="card flat">
+        <div class="spread">
+          <h2 class="mt-0">Заказы поставщику</h2>
+          <div class="row">
+            <div class="field">
+              <label for="purchasesStatus">Статус</label>
+              <select id="purchasesStatus">
+                <option value="">Все</option>
+                <option>Черновик</option>
+                <option>Отправлен</option>
+                <option>Подтверждён</option>
+                <option>Поступил</option>
+                <option>Отменён</option>
+              </select>
+            </div>
+            <button class="btn small secondary" id="purchasesFilterBtn" type="button">Показать</button>
+            <button class="btn small" id="newPurchaseBtn" type="button">Новый заказ</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Дата</th><th>Поставщик</th><th>Ожидается</th><th>Сумма</th><th>Позиций</th><th>Статус</th><th>Действия</th></tr></thead>
+            <tbody id="purchasesBody"><tr><td colspan="8" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card flat mt">
+        <div class="spread">
+          <h2 class="mt-0">Претензии поставщикам</h2>
+          <button class="btn small secondary" id="newClaimBtn" type="button">Новая претензия</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Заказ</th><th>Поставщик</th><th>Тип</th><th>Дата</th><th>Статус</th><th>Описание</th></tr></thead>
+            <tbody id="claimsBody"><tr><td colspan="7" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-deliveries" role="tabpanel">
+      <div class="card flat">
+        <div class="spread">
+          <h2 class="mt-0">Доставки</h2>
+          <div class="row">
+            <div class="field">
+              <label for="deliveriesStatus">Статус</label>
+              <select id="deliveriesStatus">
+                <option value="">Все</option>
+                <option>Назначена</option>
+                <option>Принята</option>
+                <option>В пути</option>
+                <option>Доставлена</option>
+                <option>Отменена</option>
+              </select>
+            </div>
+            <button class="btn small secondary" id="deliveriesFilterBtn" type="button">Показать</button>
+            <button class="btn small" id="newDeliveryBtn" type="button">Новая доставка</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Заказ</th><th>Адрес</th><th>Телефон</th><th>Планируется</th><th>Курьер</th><th>Агрегатор</th><th>Статус</th><th>Действия</th></tr></thead>
+            <tbody id="deliveriesBody"><tr><td colspan="9" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-finance" role="tabpanel">
+      <div class="card flat">
+        <div class="spread">
+          <h2 class="mt-0">Банковские выписки</h2>
+          <div class="row">
+            <button class="btn small secondary" id="importStatementBtn" type="button">Импорт выписки</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Дата</th><th>Файл</th><th>Загружено</th><th>Строк</th><th>Сумма</th><th>Действия</th></tr></thead>
+            <tbody id="statementsBody"><tr><td colspan="7" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card flat mt">
+        <div class="spread">
+          <h2 class="mt-0">Строки выписки</h2>
+          <div class="row">
+            <div class="field">
+              <label for="linesMatchStatus">Сопоставление</label>
+              <select id="linesMatchStatus">
+                <option value="">Все</option>
+                <option>Не сопоставлено</option>
+                <option>Сопоставлено</option>
+                <option>Расхождение</option>
+              </select>
+            </div>
+            <button class="btn small secondary" id="linesFilterBtn" type="button">Показать</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Операция</th><th>Контрагент</th><th>Назначение</th><th>Сумма</th><th>Статус</th><th>Платёж</th><th>Действия</th></tr></thead>
+            <tbody id="linesBody"><tr><td colspan="8" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card flat mt">
+        <div class="spread">
+          <h2 class="mt-0">Платежи</h2>
+          <span class="badge" id="paymentsSummary">—</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Заказ</th><th>Дата</th><th>Сумма</th><th>Способ</th><th>Статус</th></tr></thead>
+            <tbody id="paymentsBody"><tr><td colspan="6" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-hr" role="tabpanel">
+      <div class="card flat">
+        <div class="spread">
+          <h2 class="mt-0">График смен</h2>
+          <button class="btn small" id="newShiftBtn" type="button">Назначить смену</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Сотрудник</th><th>Должность</th><th>Дата</th><th>Начало</th><th>Конец</th><th>Часов</th><th>Версия</th><th>Примечание</th></tr></thead>
+            <tbody id="scheduleBody"><tr><td colspan="9" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card flat mt">
+        <div class="spread">
+          <h2 class="mt-0">Табель (сводка)</h2>
+          <div class="row">
+            <button class="btn small secondary" id="recalcTimesheetBtn" type="button">Пересчитать табель</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Сотрудник</th><th>Должность</th><th>Дней</th><th>Часов</th><th>Подтверждено дней</th></tr></thead>
+            <tbody id="timesheetBody"><tr><td colspan="5" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card flat mt">
+        <div class="spread">
+          <h2 class="mt-0">Аттестации</h2>
+          <button class="btn small" id="newAttestationBtn" type="button">Новая аттестация</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>№</th><th>Сотрудник</th><th>Дата</th><th>Тема</th><th>Результат</th><th>Балл</th><th>Преподаватель</th></tr></thead>
+            <tbody id="attestationsBody"><tr><td colspan="7" class="muted">Загрузка…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>Ресторан «Гранд» · операции</div>
+    <div class="pill-list"><a class="badge" href="admin.html">Панель</a><a class="badge" href="reports.html">Отчёты</a></div>
+    <div class="small">© 2026 · Учебный проект</div>
+  </div>
+</footer>
+
+<script src="js/api.js"></script>
+<script src="js/operations.js"></script>
+</body>
+</html>
