@@ -23,19 +23,29 @@
     Object.values(keys).forEach((key) => localStorage.removeItem(key));
   }
 
-  async function send(route, options = {}, token = null) {
+  async function send(route, options = {}, token = null, retryRead = false) {
     let response;
-    try {
-      response = await fetch(`${base}${route}`, {
-        ...options,
-        headers: {
-          apikey: publishableKey,
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
+    const attempts = retryRead ? 3 : 1;
+    for (let attempt = 0; attempt < attempts; attempt++) {
+      try {
+        response = await fetch(`${base}${route}`, {
+          ...options,
+          signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout
+            ? AbortSignal.timeout(10000)
+            : undefined,
+          headers: {
+            apikey: publishableKey,
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          }
+        });
+        if (!retryRead || ![502, 503, 504].includes(response.status) || attempt === attempts - 1) break;
+      } catch {
+        if (attempt === attempts - 1) {
+          throw failure("Не удалось связаться с Supabase. Попробуйте обновить страницу через несколько секунд.", "NETWORK_ERROR");
         }
-      });
-    } catch {
-      throw failure("Не удалось связаться с Supabase. Проверьте подключение к интернету.", "NETWORK_ERROR");
+      }
+      await new Promise((resolve) => setTimeout(resolve, 350 * (attempt + 1)));
     }
     const data = response.status === 204 ? null : await response.json().catch(() => null);
     if (!response.ok) {
@@ -86,7 +96,7 @@
   async function rpc(method, path, payload = {}, query = {}) {
     return send("/rest/v1/rpc/grand_api", {
       method: "POST", body: JSON.stringify({ method, path, query, payload })
-    }, await token());
+    }, await token(), method === "GET");
   }
 
   async function login(body) {
